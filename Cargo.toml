@@ -1,0 +1,34 @@
+[workspace]
+resolver = "3"
+
+[package]
+name = "iroh-uniffi"
+version = "0.34.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+discovery-local-network = []
+discovery-pkarr-dht = []
+
+# Dependencies
+
+[workspace.dependencies]
+iroh = { version = "0.34", default-features = false }
+uniffi = "0.29"
+
+[dependencies]
+anyhow = "1"
+iroh = { workspace = true }
+uniffi = { workspace = true, features = ["tokio"]}
+
+[build-dependencies]
+uniffi = { workspace = true, features = ["build"] }
+
+[target.'cfg(not(wasm_browser))'.dependencies]
+iroh = { workspace = true, features = [
+    "discovery-local-network",
+    "discovery-pkarr-dht",
+] }
