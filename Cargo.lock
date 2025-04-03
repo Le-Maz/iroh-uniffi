@@ -1753,7 +1753,9 @@ name = "iroh-uniffi"
 version = "0.34.0"
 dependencies = [
  "anyhow",
+ "bytes",
  "iroh",
+ "tokio",
  "uniffi",
 ]
 

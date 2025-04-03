@@ -21,7 +21,9 @@ uniffi = "0.29"
 
 [dependencies]
 anyhow = "1"
+bytes = "1"
 iroh = { workspace = true }
+tokio = { version = "1", features = ["sync"] }
 uniffi = { workspace = true, features = ["tokio"]}
 
 [build-dependencies]
