@@ -11,8 +11,6 @@ pub struct Connection {
     pub(crate) connection: iroh::endpoint::Connection,
 }
 
-impl Connection {}
-
 #[export(async_runtime = "tokio")]
 impl Connection {
     pub fn alpn(&self) -> Option<Vec<u8>> {
