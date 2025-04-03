@@ -34,3 +34,6 @@ iroh = { workspace = true, features = [
     "discovery-local-network",
     "discovery-pkarr-dht",
 ] }
+
+[target.'cfg(target_family="wasm")'.dependencies]
+getrandom = { version = "0.3", features = ["wasm_js"]}
