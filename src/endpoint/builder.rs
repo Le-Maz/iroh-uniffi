@@ -59,18 +59,6 @@ impl EndpointBuilder {
         Ok(self)
     }
 
-    #[cfg(not(target_family = "wasm"))]
-    pub fn discovery_dht(self: Arc<Self>) -> Result<Arc<Self>, IrohError> {
-        self.apply(|builder| builder.discovery_dht());
-        Ok(self)
-    }
-
-    #[cfg(not(target_family = "wasm"))]
-    pub fn discovery_local_network(self: Arc<Self>) -> Result<Arc<Self>, IrohError> {
-        self.apply(|builder| builder.discovery_local_network());
-        Ok(self)
-    }
-
     pub fn proxy_url(self: Arc<Self>, url: &str) -> Result<Arc<Self>, IrohError> {
         let url = url.parse()?;
         self.apply(|builder| builder.proxy_url(url));
@@ -90,6 +78,19 @@ impl EndpointBuilder {
     pub async fn bind(self: Arc<Self>) -> Result<Endpoint, IrohError> {
         let builder = self.0.lock().unwrap().take().ok_or_else(already_bound)?;
         Ok(Endpoint(builder.bind().await?))
+    }
+}
+
+#[cfg(not(target_family = "wasm"))]
+#[export]
+impl EndpointBuilder {
+    pub fn discovery_dht(self: Arc<Self>) -> Result<Arc<Self>, IrohError> {
+        self.apply(|builder| builder.discovery_dht());
+        Ok(self)
+    }
+    pub fn discovery_local_network(self: Arc<Self>) -> Result<Arc<Self>, IrohError> {
+        self.apply(|builder| builder.discovery_local_network());
+        Ok(self)
     }
 }
 
