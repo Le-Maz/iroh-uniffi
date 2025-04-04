@@ -8,12 +8,11 @@ async def accept(endpoint: Endpoint):
         conn = await endpoint.accept()
         print(f'Accepted connection from {conn.node_id_short()}')
 
-        bi_stream = await conn.accept_bi()
-        recv = bi_stream.recv_stream()
+        recv = (await conn.accept_bi()).recv_stream
 
         while (chunk := await recv.read_chunk(20, True)) is not None:
             if chunk:
-                print(f'Received chunk {chunk.bytes()}')
+                print(f'Received chunk {chunk.bytes}')
     except IrohError as err:
         print(err.message())
         raise err
@@ -24,8 +23,7 @@ async def connect_to(endpoint: Endpoint, other_id: str):
         conn = await endpoint.connect(other_id, b'dummy')
         print(f'Connected to {conn.node_id_short()}')
 
-        bi_stream = await conn.open_bi()
-        send = bi_stream.send_stream()
+        send = (await conn.open_bi()).send_stream
 
         for i in range(10):
             await send.write(f'Message {i}\0'.encode())

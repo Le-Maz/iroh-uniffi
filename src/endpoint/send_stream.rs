@@ -1,7 +1,7 @@
 use bytes::Bytes;
 use iroh::endpoint::VarInt;
 use tokio::sync::Mutex;
-use uniffi::{Object, export};
+use uniffi::{export, Object, Record};
 
 use crate::iroh_error::IrohError;
 
@@ -59,21 +59,10 @@ impl From<iroh::endpoint::SendStream> for SendStream {
     }
 }
 
-#[derive(Object, Debug)]
+#[derive(Record, Debug)]
 pub struct Written {
     bytes: u64,
     chunks: u64,
-}
-
-#[export]
-impl Written {
-    pub fn bytes(&self) -> u64 {
-        self.bytes
-    }
-
-    pub fn chunks(&self) -> u64 {
-        self.chunks
-    }
 }
 
 impl From<iroh::endpoint::Written> for Written {

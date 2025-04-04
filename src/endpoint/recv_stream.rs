@@ -1,8 +1,6 @@
-use std::sync::Arc;
-
 use iroh::endpoint::VarInt;
 use tokio::sync::Mutex;
-use uniffi::{Object, export};
+use uniffi::{export, Object, Record};
 
 use crate::iroh_error::IrohError;
 
@@ -19,15 +17,14 @@ impl RecvStream {
         &self,
         max_length: u64,
         ordered: bool,
-    ) -> Result<Option<Arc<Chunk>>, IrohError> {
+    ) -> Result<Option<Chunk>, IrohError> {
         Ok(self
             .0
             .lock()
             .await
             .read_chunk(max_length as usize, ordered)
             .await?
-            .map(Into::into)
-            .map(Arc::new))
+            .map(Into::into))
     }
 
     pub async fn read_exact(&self, bufsize: u64) -> Result<Vec<u8>, IrohError> {
@@ -56,21 +53,10 @@ impl From<iroh::endpoint::RecvStream> for RecvStream {
     }
 }
 
-#[derive(Object, Debug)]
+#[derive(Record, Debug)]
 pub struct Chunk {
     offset: u64,
     bytes: Vec<u8>,
-}
-
-#[export]
-impl Chunk {
-    pub fn offset(&self) -> u64 {
-        self.offset
-    }
-
-    pub fn bytes(&self) -> Vec<u8> {
-        self.bytes.clone()
-    }
 }
 
 impl From<iroh::endpoint::Chunk> for Chunk {

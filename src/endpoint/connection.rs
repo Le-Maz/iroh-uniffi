@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use uniffi::{Object, export};
+use uniffi::{export, Object, Record};
 
 use crate::iroh_error::IrohError;
 
@@ -35,12 +35,18 @@ impl Connection {
 
     pub async fn open_bi(&self) -> Result<BiStream, IrohError> {
         let (send, recv) = self.connection.open_bi().await?;
-        Ok(BiStream(Arc::new(send.into()), Arc::new(recv.into())))
+        Ok(BiStream {
+            send_stream: Arc::new(send.into()),
+            recv_stream: Arc::new(recv.into()),
+        })
     }
 
     pub async fn accept_bi(&self) -> Result<BiStream, IrohError> {
         let (send, recv) = self.connection.accept_bi().await?;
-        Ok(BiStream(Arc::new(send.into()), Arc::new(recv.into())))
+        Ok(BiStream {
+            send_stream: Arc::new(send.into()),
+            recv_stream: Arc::new(recv.into()),
+        })
     }
 }
 
@@ -50,15 +56,8 @@ impl From<iroh::endpoint::Connection> for Connection {
     }
 }
 
-#[derive(Object, Debug)]
-pub struct BiStream(Arc<SendStream>, Arc<RecvStream>);
-
-#[export]
-impl BiStream {
-    pub fn send_stream(&self) -> Arc<SendStream> {
-        self.0.clone()
-    }
-    pub fn recv_stream(&self) -> Arc<RecvStream> {
-        self.1.clone()
-    }
+#[derive(Record, Debug)]
+pub struct BiStream {
+    pub send_stream: Arc<SendStream>,
+    pub recv_stream: Arc<RecvStream>,
 }
